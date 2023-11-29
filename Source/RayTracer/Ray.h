@@ -1,14 +1,17 @@
-//#pragma once
-//
-//struct ray_t
-//{
-//	ray_t() = default;
-//	ray_t(const glm::vec3& origin, const glm::vec3& direction) :
-//		< ? ? ? >,
-//		< ? ? ? >
-//	{}
-//
-//		<return point> GetPoint(float distance) const { <return point> }
-//
-//	glm::vec3 origin
-//};
+#pragma once
+#include <glm/glm.hpp>
+
+struct ray_t
+{
+	ray_t() = default;
+	ray_t(const glm::vec3& origin, const glm::vec3& direction) :
+		origin{ origin },
+		direction{ direction }
+	{}
+
+	glm::vec3 GetPoint(float distance) const { return origin + distance * direction; }
+	glm::vec3 operator * (float distance) const { return origin + distance * direction; }
+
+	glm::vec3 origin{ 0 };
+	glm::vec3 direction{ 0 };
+};
