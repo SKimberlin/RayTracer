@@ -4,6 +4,7 @@
 
 void Scene::Render(Canvas& canvas)
 {
+
 	// cast ray for each point (pixel) on the canvas
 	for (int y = 0; y < canvas.GetSize().y; y++)
 	{
@@ -21,7 +22,9 @@ void Scene::Render(Canvas& canvas)
 
 				// cast ray into scene
 				// set color value from trace
-				color3_t color = Trace(ray);
+				raycastHit_t raycastHit;
+				color3_t color = Trace(ray, 0, 100, raycastHit);
+				
 
 			// draw color to canvas point (pixel)
 			canvas.DrawPoint(pixel, color4_t(color, 1));
@@ -29,13 +32,56 @@ void Scene::Render(Canvas& canvas)
 	}
 }
 
-color3_t Scene::Trace(const ray_t& ray)
+color3_t Scene::Trace(const ray_t& ray, float minDistance, float maxDistance, raycastHit_t& raycastHit)
 {
-	glm::vec3 direction = glm::normalize(ray.direction);
+	bool rayHit = false;
+	float closestDistance = maxDistance;
 
-	// set scene sky color
+	// check if scene objects are hit by the ray
+	for (auto& object : m_objects)
+	{
+		// when checking objects don't include objects farther than closest hit (starts at max distance)
+		if (object->Hit(ray, minDistance, closestDistance, raycastHit))
+		{
+			rayHit = true;
+			// set closest distance to the raycast hit distance (only hit objects closer than closest distance)
+			closestDistance = raycastHit.distance;
+		}
+	}
+
+	// if ray hit object, scatter (bounce) ray and check for next hit
+	if (rayHit)
+	{
+		ray_t scattered;
+		color3_t color;
+		
+		if (raycastHit.material->Scatter(ray, raycastHit, color, scattered))
+		{
+			return color;
+		}
+		/*
+		if (raycastHit.material->Scatter(ray, raycastHit, color, scattered))
+		{
+			return raycastHit.normal;
+		}
+		*/
+
+		/*
+		if (raycastHit.material->Scatter(ray, raycastHit, color, scattered))
+		{
+			return color3_t(raycastHit.distance * 0.2);
+		}
+		*/
+		else
+		{
+			return color3_t{ 0, 0, 0 };
+		}
+	}
+
+	// if ray not hit, return scene sky color
+	glm::vec3 direction = glm::normalize(ray.direction);
 	float t = (direction.y + 1) * 0.5f; // direction.y (-1 <-> 1) => (0 <-> 1)
 	color3_t color = lerp(m_bottomColor, m_topColor, t);
 
-		return color;
+	return color;
 }
