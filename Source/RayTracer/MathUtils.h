@@ -24,3 +24,9 @@ inline float dot(const glm::vec3& v1, const glm::vec3& v2)
 {
 	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
+
+inline glm::vec3 reflect(const glm::vec3& v, const glm::vec3& n)
+{
+	// I - 2.0 * dot(N, I) * N
+	return v - 2.0f * dot(n, v) * n;
+}
