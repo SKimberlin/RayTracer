@@ -157,8 +157,8 @@ xcopy "$(SolutionDir)Source\ThirdParty\assimp\lib\$(Configuration)\*.dll" "$(Sol
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Source.cpp" />
     <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

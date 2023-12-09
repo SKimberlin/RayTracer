@@ -4,14 +4,21 @@
 #include "Random.h"
 #include <iomanip>
 #include <iostream>
+#include <chrono>
 
 
 void Scene::Render(Canvas& canvas, int numSamples, int depth)
 {
+	std::chrono::steady_clock::time_point beginTime = std::chrono::steady_clock::now();
+
+	std::chrono::seconds totalTimeElapsed{ 0 };
+	std::chrono::seconds averageIterationTime{ 0 };
+	int totalIterations = canvas.GetSize().x * canvas.GetSize().y;
 
 	// cast ray for each point (pixel) on the canvas
 	for (int y = 0; y < canvas.GetSize().y; y++)
 	{
+
 		for (int x = 0; x < canvas.GetSize().x; x++)
 		{
 			// create vec2 pixel from canvas x,y
@@ -42,9 +49,28 @@ void Scene::Render(Canvas& canvas, int numSamples, int depth)
 			// get average color (average = (color + color + color) / number of samples)
 			color /= numSamples;
 			canvas.DrawPoint(pixel, color4_t(color, 1));
+
+			std::chrono::steady_clock::time_point endTime = std::chrono::steady_clock::now();
+			totalTimeElapsed = std::chrono::duration_cast<std::chrono::seconds>(endTime - beginTime);
+
+			int currentIteration = (y + 1) * canvas.GetSize().x;
+			double progress = static_cast<double>(currentIteration) / totalIterations;
+
+			std::chrono::seconds projectedTimeLeft = std::chrono::seconds(static_cast<long long>((1.0 - progress) * (totalTimeElapsed.count() / progress)));
+
+			int hours = projectedTimeLeft.count() / 3600;
+			int minutes = (projectedTimeLeft.count() % 3600) / 60;
+			int seconds = projectedTimeLeft.count() % 60;
+
+			// Output progress and projected time left in hh:mm:ss format after each y iteration
+			std::cout << "Progress: " << std::setprecision(2) << (progress * 100) << "%"
+				<< " - Projected time left: " << std::setfill('0') << std::setw(2) << hours << ":"
+				<< std::setfill('0') << std::setw(2) << minutes << ":"
+				<< std::setfill('0') << std::setw(2) << seconds 
+				<< " - Total rendering time: " << totalTimeElapsed.count() << " seconds\n";
 			
 		}
-		std::cout << std::setprecision(2) << std::setw(5) << ((y / (float)canvas.GetSize().y) * 100) << "%\n";
+
 	}
 }
 

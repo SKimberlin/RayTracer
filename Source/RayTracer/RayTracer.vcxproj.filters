@@ -33,9 +33,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -46,6 +43,9 @@
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
   </ItemGroup>
